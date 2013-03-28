@@ -6,6 +6,10 @@ defmodule DataCollector do
 
   ## API
 
+  def reset(state) do
+    State.new
+  end
+
   def collect({b, v, t}, state) when is_list(b) do
     collect({list_to_atom(b), v, t}, state)
   end
