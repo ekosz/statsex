@@ -1,7 +1,9 @@
-Code.require_file "../test_helper.exs", __FILE__
+Code.require_file "../../test_helper.exs", __FILE__
 
 defmodule CommandParserTest do
   use ExUnit.Case, async: true
+
+  alias StatsEx.CommandParser, as: CommandParser
 
   @commands [ 
     [command: "count:1|c",     bucket: "count",   amount: "1",   type: "c"],

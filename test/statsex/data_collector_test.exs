@@ -1,9 +1,10 @@
-Code.require_file "../test_helper.exs", __FILE__
+Code.require_file "../../test_helper.exs", __FILE__
 
 defmodule DataCollectorTest do
   use ExUnit.Case, async: true
 
-  alias DataCollector.State, as: State
+  alias StatsEx.DataCollector, as: DataCollector
+  alias StatsEx.DataCollector.State, as: State
 
   test "when I have no counts for a bucket, it will create it" do
     state = State.new

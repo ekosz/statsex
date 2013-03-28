@@ -1,2 +1,2 @@
-defmodule Statsex do
+defmodule StatsEx do
 end

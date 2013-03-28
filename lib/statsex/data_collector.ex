@@ -1,4 +1,4 @@
-defmodule DataCollector do
+defmodule StatsEx.DataCollector do
   defrecord State, counts: [], timers: [], gauges: [], sets: []
 
   @plus_sign 43
