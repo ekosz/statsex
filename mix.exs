@@ -9,7 +9,9 @@ defmodule Statsex.Mixfile do
 
   # Configuration for the OTP application
   def application do
-    []
+    [ registered: [:statsex],
+      env: [],
+      mod: { StatsEx.App, [] } ]
   end
 
   # Returns the list of dependencies in the format:
