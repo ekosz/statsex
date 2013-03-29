@@ -4,7 +4,7 @@ defmodule DataCollectorTest do
   use ExUnit.Case, async: true
 
   alias StatsEx.DataCollector, as: DataCollector
-  alias StatsEx.DataCollector.State, as: State
+  alias StatsEx.State, as: State
 
   test "when I have no counts for a bucket, it will create it" do
     state = State.new

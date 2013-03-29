@@ -1,12 +1,12 @@
 defmodule StatsEx.DataCollector do
-  defrecord State, counts: [], timers: [], gauges: [], sets: []
+  alias StatsEx.State, as: State
 
   @plus_sign 43
   @minus_sign 45
 
   ## API
 
-  def reset(state) do
+  def reset(_state) do
     State.new
   end
 
