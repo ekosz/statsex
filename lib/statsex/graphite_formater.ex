@@ -11,6 +11,7 @@ defmodule StatsEx.GraphiteFormatter do
     msg = format_timers(state.timers, msg, timestamp)
 
     msg = calculation_time(start_time - StatsEx.current_unix_time(), msg, timestamp)
+
     msg
   end
 

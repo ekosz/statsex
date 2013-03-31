@@ -22,6 +22,12 @@ defmodule StatsEx.DataHolder do
   end
   
   def handle_cast(:flush, state) do
+    spawn fn -> flush(state) end
     {:noreply, reset(state)}
+  end
+
+  defp flush(state) do
+    payload = StatsEx.GraphiteFormatter.format(state)
+    StatsEx.GraphitePusher.send(payload)
   end
 end
