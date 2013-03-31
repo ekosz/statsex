@@ -31,7 +31,7 @@ defmodule StatsEx.UDPServer do
 
     case command do
       {bucket, value, type} when !!bucket and !!value and !!type ->
-        Notifier.notify_data(command)
+        StatsEx.Notifier.notify_data(command)
       _ ->
     end
   end
