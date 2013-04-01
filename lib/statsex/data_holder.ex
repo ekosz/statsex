@@ -27,7 +27,7 @@ defmodule StatsEx.DataHolder do
   end
 
   defp flush(state) do
-    payload = StatsEx.GraphiteFormatter.format(state)
+    payload = StatsEx.GraphiteFormatter.format(state, StatsEx.current_unix_time())
     StatsEx.GraphitePusher.send(payload)
   end
 end
