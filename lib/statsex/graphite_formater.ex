@@ -35,12 +35,13 @@ defmodule StatsEx.GraphiteFormatter do
 
   defp format_timers(timers, msg, timestamp) do
     Enum.reduce timers, msg, fn({key, timer}, acc) ->
-      acc = acc <> graphite_data_point("timers.#{key}.average", timer[:average], timestamp)
-      acc = acc <> graphite_data_point("timers.#{key}.lower",   timer[:lower],   timestamp)
-      acc = acc <> graphite_data_point("timers.#{key}.upper",   timer[:upper],   timestamp)
-      acc = acc <> graphite_data_point("timers.#{key}.sum",     timer[:sum],     timestamp)
+      key = "timers.#{key}"
+      acc = acc <> graphite_data_point("#{key}.average", timer[:average], timestamp)
+      acc = acc <> graphite_data_point("#{key}.lower",   timer[:lower],   timestamp)
+      acc = acc <> graphite_data_point("#{key}.upper",   timer[:upper],   timestamp)
+      acc = acc <> graphite_data_point("#{key}.sum",     timer[:sum],     timestamp)
 
-      acc <> graphite_data_point("timers.#{key}.standard_deviation", timer[:standard_deviation], timestamp)
+      acc <> graphite_data_point("#{key}.standard_deviation", timer[:standard_deviation], timestamp)
     end
   end
 
