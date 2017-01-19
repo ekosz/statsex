@@ -45,9 +45,9 @@ defmodule StatsEx.DataCollector do
   defp count(bucket, value, state) do
     current_count = state.counts[bucket] || 0
 
-    count = current_count + value
+    new_count = current_count + value
 
-    %{state | counts: Keyword.put(state.counts, bucket, count)}
+    %{state | counts: Keyword.put(state.counts, bucket, new_count)}
   end
 
   ### Set
@@ -62,8 +62,8 @@ defmodule StatsEx.DataCollector do
         state
       false ->
         current_set = state.sets[bucket] || []
-        set = current_set ++ [value]
-        %{state | sets: Keyword.put(state.sets, bucket, set)}
+        new_set = current_set ++ [value]
+        %{state | sets: Keyword.put(state.sets, bucket, new_set)}
     end
   end
 
@@ -72,9 +72,9 @@ defmodule StatsEx.DataCollector do
   defp gauge(bucket, value, state) when hd(value) == @plus_sign or hd(value) == @minus_sign do
     current_gauge = state.gauges[bucket] || 0
 
-    gauge = current_gauge + :erlang.list_to_integer(value)
+    new_gauge = current_gauge + :erlang.list_to_integer(value)
 
-    %{state | gauges: Keyword.put(state.gauges, bucket, gauge)}
+    %{state | gauges: Keyword.put(state.gauges, bucket, new_gauge)}
   end
 
   defp gauge(bucket, value, state) do
@@ -91,21 +91,18 @@ defmodule StatsEx.DataCollector do
     timer = state.timers[bucket]
     timer = Keyword.put(timer, :data, timer[:data] ++ [value])
 
-    timer = Keyword.put(timer, :mean, mean(timer[:data]))
-    timer = Keyword.put(timer, :sum, sum(timer[:data]))
-    timer = Keyword.put(timer, :upper, :lists.max(timer[:data]))
-    timer = Keyword.put(timer, :lower, :lists.min(timer[:data]))
-    timer = Keyword.put(timer, :standard_deviation, standard_dev(timer[:data]))
+    new_timer = timer
+      |> Keyword.put(:mean, mean(timer[:data]))
+      |> Keyword.put(:sum, Enum.sum(timer[:data]))
+      |> Keyword.put(:upper, :lists.max(timer[:data]))
+      |> Keyword.put(:lower, :lists.min(timer[:data]))
+      |> Keyword.put(:standard_deviation, standard_dev(timer[:data]))
 
-    %{state | timers: Keyword.put(state.timers, bucket, timer)}
-  end
-
-  defp sum(array) do
-    Enum.reduce(array, 0, fn(unit, acc) -> unit + acc end)
+    %{state | timers: Keyword.put(state.timers, bucket, new_timer)}
   end
 
   defp mean(array) do
-    sum(array) / length(array)
+    Enum.sum(array) / length(array)
   end
 
   defp standard_dev(values) when is_list(values) do

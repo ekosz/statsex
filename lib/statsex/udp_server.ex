@@ -1,5 +1,6 @@
 defmodule StatsEx.UDPServer do
   use GenServer
+  require Logger
 
   import StatsEx.CommandParser, only: [parse: 1]
 
@@ -27,12 +28,10 @@ defmodule StatsEx.UDPServer do
   end
 
   defp handle_new_data(packet) do
-    command = parse(packet)
-
-    case command do
-      {bucket, value, type} ->
+    case command = parse(packet) do
+      {_bucket, _value, _type} ->
         StatsEx.Notifier.notify_data(command)
-      _ ->
+      _ -> Logger.warn("Something went wrong with parsing of the packet: " <> packet)
     end
   end
 end

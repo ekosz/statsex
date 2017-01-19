@@ -14,7 +14,7 @@ defmodule StatsEx.DataHolder do
   def init([]) do
     StatsEx.Notifier.join_feed(self())
 
-    {:ok, StatsEx.State.new}
+    {:ok, %StatsEx.State{}}
   end
 
   def handle_cast({:data, data}, state) do
