@@ -1,10 +1,10 @@
 defmodule StatsEx.UDPServer do
-  use GenServer.Behaviour
+  use GenServer
 
   import StatsEx.CommandParser, only: [parse: 1]
 
   ## API
-  
+
   def start_link(port) do
     :gen_server.start_link({:local, __MODULE__}, __MODULE__, [port], [])
   end
@@ -30,7 +30,7 @@ defmodule StatsEx.UDPServer do
     command = parse(packet)
 
     case command do
-      {bucket, value, type} when !!bucket and !!value and !!type ->
+      {bucket, value, type} ->
         StatsEx.Notifier.notify_data(command)
       _ ->
     end

@@ -1,5 +1,7 @@
 defmodule StatsEx do
-  defrecord State, counts: [], timers: [], gauges: [], sets: []
+  defmodule State do
+    defstruct counts: [], timers: [], gauges: [], sets: []
+  end
 
   def current_unix_time do
     {mega, secs, _} = :erlang.now()

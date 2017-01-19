@@ -1,11 +1,9 @@
-Code.require_file "../../test_helper.exs", __FILE__
-
 defmodule CommandParserTest do
   use ExUnit.Case, async: true
 
   alias StatsEx.CommandParser, as: CommandParser
 
-  @commands [ 
+  @commands [
     [command: "count:1|c",     bucket: "count",   amount: "1",   type: "c"],
     [command: "glork:320|ms",  bucket: "glork",   amount: "320", type: "ms"],
     [command: "gaugor:333|g",  bucket: "gaugor",  amount: "333", type: "g"],

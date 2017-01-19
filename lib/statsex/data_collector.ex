@@ -7,15 +7,15 @@ defmodule StatsEx.DataCollector do
   ## API
 
   def reset(_state) do
-    State.new
+    %State{}
   end
 
   def collect({b, v, t}, state) when is_list(b) do
-    collect({list_to_atom(b), v, t}, state)
+    collect({:erlang.list_to_atom(b), v, t}, state)
   end
 
   def collect({b, v, t}, state) when is_list(t) do
-    collect({b, v, list_to_atom(t)}, state)
+    collect({b, v, :erlang.list_to_atom(t)}, state)
   end
 
   def collect({b, v, :c}, state) do
@@ -39,7 +39,7 @@ defmodule StatsEx.DataCollector do
   ### Count
 
   defp count(b, v, state) when is_list(v) do
-    count(b, list_to_integer(v), state)
+    count(b, :erlang.list_to_integer(v), state)
   end
 
   defp count(bucket, value, state) do
@@ -47,23 +47,23 @@ defmodule StatsEx.DataCollector do
 
     count = current_count + value
 
-    state.counts(Keyword.put(state.counts, bucket, count))
+    %{state | counts: Keyword.put(state.counts, bucket, count)}
   end
 
   ### Set
 
   defp set(b, v, state) when is_list(v) do
-    set(b, list_to_integer(v), state)
+    set(b, :erlang.list_to_integer(v), state)
   end
 
   defp set(bucket, value, state) do
-    case List.member?(state.sets[bucket], value) do
+    case Enum.member?(state.sets[bucket], value) do
       true ->
         state
       false ->
         current_set = state.sets[bucket] || []
         set = current_set ++ [value]
-        state.sets(Keyword.put(state.sets, bucket, set))
+        %{state | sets: Keyword.put(state.sets, bucket, set)}
     end
   end
 
@@ -72,19 +72,19 @@ defmodule StatsEx.DataCollector do
   defp gauge(bucket, value, state) when hd(value) == @plus_sign or hd(value) == @minus_sign do
     current_gauge = state.gauges[bucket] || 0
 
-    gauge = current_gauge + list_to_integer(value)
+    gauge = current_gauge + :erlang.list_to_integer(value)
 
-    state.gauges(Keyword.put(state.gauges, bucket, gauge))
+    %{state | gauges: Keyword.put(state.gauges, bucket, gauge)}
   end
 
   defp gauge(bucket, value, state) do
-    state.gauges(Keyword.put(state.gauges, bucket, list_to_integer(value)))
+    %{state | gauges: Keyword.put(state.gauges, bucket, :erlang.list_to_integer(value))}
   end
 
   ### Time
 
   defp time(b, v, state) when is_list(v) do
-    time(b, list_to_integer(v), state)
+    time(b, :erlang.list_to_integer(v), state)
   end
 
   defp time(bucket, value, state) do
@@ -97,7 +97,7 @@ defmodule StatsEx.DataCollector do
     timer = Keyword.put(timer, :lower, :lists.min(timer[:data]))
     timer = Keyword.put(timer, :standard_deviation, standard_dev(timer[:data]))
 
-    state.timers(Keyword.put(state.timers, bucket, timer))
+    %{state | timers: Keyword.put(state.timers, bucket, timer)}
   end
 
   defp sum(array) do

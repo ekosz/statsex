@@ -1,5 +1,5 @@
 defmodule StatsEx.Supervisor do
-  use Supervisor.Behaviour
+  use Supervisor
 
   def start_link(name, opts) do
     :supervisor.start_link({ :local, name }, __MODULE__, opts)
@@ -14,7 +14,7 @@ defmodule StatsEx.Supervisor do
       StatsEx.Supervisor.start_child MySup.supervisor, Worker, []
 
   """
-  def start_child(supervisor, name, args, opts // []) do
+  def start_child(supervisor, name, args, opts \\ []) do
     :supervisor.start_child(supervisor, worker(name, args, opts))
   end
 

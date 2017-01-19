@@ -1,7 +1,7 @@
 defmodule StatsEx.App do
   @moduledoc false
 
-  use Application.Behaviour
+  use Application
 
   def start(_type, _args) do
     {:ok, pid} = StatsEx.Supervisor.start_link(StatsEx.Supervisor, [])

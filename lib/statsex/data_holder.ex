@@ -1,5 +1,5 @@
 defmodule StatsEx.DataHolder do
-  use GenServer.Behaviour
+  use GenServer
 
   import StatsEx.DataCollector, only: [reset: 1, collect: 2]
 
@@ -20,7 +20,7 @@ defmodule StatsEx.DataHolder do
   def handle_cast({:data, data}, state) do
     {:noreply, collect(data, state)}
   end
-  
+
   def handle_cast(:flush, state) do
     spawn fn -> flush(state) end
     {:noreply, reset(state)}

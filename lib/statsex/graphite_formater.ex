@@ -1,7 +1,7 @@
 defmodule StatsEx.GraphiteFormatter do
   @namespace "stats"
 
-  def format(state, timestamp // "") do
+  def format(state, timestamp \\ "") do
     start_time = StatsEx.current_unix_time()
     msg = ""
 
