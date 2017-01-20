@@ -1,6 +1,6 @@
 defmodule StatsEx do
   defmodule State do
-    defstruct counts: [], timers: [], gauges: [], sets: []
+    defstruct counts: %{}, timers: %{}, gauges: %{}, sets: %{}
   end
 
   def current_unix_time do

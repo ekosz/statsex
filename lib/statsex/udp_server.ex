@@ -18,11 +18,13 @@ defmodule StatsEx.UDPServer do
   end
 
   def handle_cast({:start_listening, port}, state) do
+    IO.puts "Handle Cast"
     :gen_udp.open(port, [:list, {:active, true}])
     {:noreply, state}
   end
 
   def handle_info({:udp, _socket, _ip, _port, packet}, state) do
+    IO.puts "Handle Info"
     spawn fn -> handle_new_data(packet) end
     {:noreply, state}
   end
@@ -31,7 +33,7 @@ defmodule StatsEx.UDPServer do
     case command = parse(packet) do
       {_bucket, _value, _type} ->
         StatsEx.Notifier.notify_data(command)
-      _ -> Logger.warn("Something went wrong with parsing of the packet: " <> packet)
+      :error -> Logger.warn("Something went wrong with parsing of the packet: " <> packet)
     end
   end
 end

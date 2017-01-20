@@ -4,12 +4,12 @@ defmodule CommandParserTest do
   alias StatsEx.CommandParser, as: CommandParser
 
   @commands [
-    [command: "count:1|c",     bucket: "count",   amount: "1",   type: "c"],
-    [command: "glork:320|ms",  bucket: "glork",   amount: "320", type: "ms"],
-    [command: "gaugor:333|g",  bucket: "gaugor",  amount: "333", type: "g"],
-    [command: "gaugor:-10|g",  bucket: "gaugor",  amount: "-10", type: "g"],
-    [command: "gaugor:+4|g",   bucket: "gaugor",  amount: "+4",  type: "g"],
-    [command: "uniques:765|s", bucket: "uniques", amount: "765", type: "s"]
+    [command: "count:1|c",     bucket: "count",   amount: 1,   type: :c],
+    [command: "glork:320|ms",  bucket: "glork",   amount: 320, type: :ms],
+    [command: "gaugor:333|g",  bucket: "gaugor",  amount: "333", type: :g],
+    [command: "gaugor:-10|g",  bucket: "gaugor",  amount: "-10", type: :g],
+    [command: "gaugor:+4|g",   bucket: "gaugor",  amount: "+4",  type: :g],
+    [command: "uniques:765|s", bucket: "uniques", amount: 765, type: :s]
     ]
 
   Enum.map @commands, fn(command) ->

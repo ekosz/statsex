@@ -3,6 +3,8 @@ defmodule StatsEx.GraphitePusher do
   def send(payload) do
     host = StatsEx.appvar(:graphite_host, '127.0.0.1')
     port = StatsEx.appvar(:graphite_port, 2003)
+    IO.puts "Sending paylod:"
+    IO.inspect payload
 
     case :gen_tcp.connect(host, port, [:binary, {:packet, 0}]) do
       {:ok, socket} ->
