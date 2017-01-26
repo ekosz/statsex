@@ -2,21 +2,22 @@ defmodule Statsex.Mixfile do
   use Mix.Project
 
   def project do
-    [ app: :statsex,
-      version: "0.0.1",
-      deps: deps ]
+    [app: :statsex,
+     version: "0.0.1",
+     elixir: "~> 1.4",
+     build_embedded: Mix.env == :prod,
+     start_permanent: Mix.env == :prod,
+     deps: deps() ]
   end
 
-  # Configuration for the OTP application
   def application do
-    [ registered: [:statsex],
-      env: [],
-      mod: { StatsEx.App, [] } ]
+    [extra_applications: [:logger],
+     mod: { StatsEx.App, []}]
   end
 
-  # Returns the list of dependencies in the format:
-  # { :foobar, "0.1", git: "https://github.com/elixir-lang/foobar.git" }
   defp deps do
-    []
+    [
+      {:credo, "~> 0.6", only: [:dev, :test]},
+    ]
   end
 end

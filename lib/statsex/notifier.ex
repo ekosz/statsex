@@ -1,5 +1,8 @@
 defmodule StatsEx.Notifier do
-  @behavior :gen_event
+  @moduledoc """
+  Notifies the data holder from time to time to flush out data.
+  """
+  @behaviour :gen_event
 
   # API
 
@@ -24,11 +27,12 @@ defmodule StatsEx.Notifier do
   # GenEvent Callbacks
 
   def init([pid]) do
+    :timer.apply_interval(10_000, __MODULE__, :notify_flush, [])
     {:ok, pid}
   end
 
   def handle_event(event, pid) do
-    :ok = :gen_server.cast(pid, event)
+    :ok = GenServer.cast(pid, event)
     {:ok, pid}
   end
 
@@ -43,7 +47,7 @@ defmodule StatsEx.Notifier do
   def code_change(_old_vsn, pid, _extra) do
     {:ok, pid}
   end
-     
+
   def terminate(_reason, _state) do
     :ok
   end

@@ -1,7 +1,13 @@
 defmodule StatsEx.DataHolder do
+  @moduledoc """
+  Holds the collected data until flushed out.
+  """
   use GenServer
 
   import StatsEx.DataCollector, only: [reset: 1, collect: 2]
+  import StatsEx.GraphiteFormatter, only: [format: 2]
+  import StatsEx.GraphitePusher, only: [send: 1]
+  import StatsEx.Notifier, only: [join_feed: 1]
 
   ## API
 
@@ -12,7 +18,7 @@ defmodule StatsEx.DataHolder do
   ## GenServer Callbacks
 
   def init([]) do
-    StatsEx.Notifier.join_feed(self())
+    join_feed(self())
 
     {:ok, %StatsEx.State{}}
   end
@@ -27,7 +33,8 @@ defmodule StatsEx.DataHolder do
   end
 
   defp flush(state) do
-    payload = StatsEx.GraphiteFormatter.format(state, StatsEx.current_unix_time())
-    StatsEx.GraphitePusher.send(payload)
+    state
+    |> format(StatsEx.current_unix_time())
+    |> send()
   end
 end

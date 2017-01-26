@@ -1,4 +1,7 @@
 defmodule StatsEx.CommandParser do
+  @moduledoc """
+  Parses commands in StatsD line format
+  """
 
   @types ~w(c s g ms)
 

@@ -1,19 +1,20 @@
 defmodule StatsEx.App do
-  @moduledoc false
-
+  @moduledoc """
+  Application that spawns an UDP server, a Data Holder and a Notifier
+  """
   use Application
 
   def start(_type, _args) do
-    {:ok, pid} = StatsEx.Supervisor.start_link(StatsEx.Supervisor, [])
+    import Supervisor.Spec, warn: false
 
-    StatsEx.Supervisor.start_child(StatsEx.Supervisor, StatsEx.Notifier, [])
-    :timer.apply_interval(10*1000, StatsEx.Notifier, :notify_flush, [])
+    children = [
+      worker(StatsEx.Notifier, []),
+      worker(StatsEx.UDPServer, [Application.get_env(:statsex, :udp_port)]),
+      worker(StatsEx.DataHolder, [])
+    ]
 
-    port = StatsEx.appvar(:udp_port, 8888)
-    StatsEx.Supervisor.start_child(StatsEx.Supervisor, StatsEx.UDPServer, [port])
-
-    StatsEx.Supervisor.start_child(StatsEx.Supervisor, StatsEx.DataHolder, [])
-
-    {:ok, pid}
+    opts = [strategy: :one_for_one, name: StatsEx.Supervisor]
+    Supervisor.start_link(children, opts)
   end
+
 end
