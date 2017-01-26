@@ -2,13 +2,8 @@ defmodule StatsEx.DataCollector do
   @moduledoc """
   Collects data into metric types: count, set, gauge and time
   """
-  alias StatsEx.State, as: State
 
   ## API
-
-  def reset(_state) do
-    %State{}
-  end
 
   def collect({b, v, :c},  s), do: count(b, v, s)
   def collect({b, v, :s},  s), do: set(b, v, s)

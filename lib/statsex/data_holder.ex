@@ -4,15 +4,16 @@ defmodule StatsEx.DataHolder do
   """
   use GenServer
 
-  import StatsEx.DataCollector, only: [reset: 1, collect: 2]
+  import StatsEx.DataCollector, only: [collect: 2]
   import StatsEx.GraphiteFormatter, only: [format: 2]
   import StatsEx.GraphitePusher, only: [send: 1]
   import StatsEx.Notifier, only: [join_feed: 1]
+  alias StatsEx.State, as: State
 
   ## API
 
   def start_link do
-    :gen_server.start_link({:local, __MODULE__}, __MODULE__, [], [])
+    GenServer.start_link(__MODULE__, [], name: __MODULE__)
   end
 
   ## GenServer Callbacks
@@ -28,8 +29,10 @@ defmodule StatsEx.DataHolder do
   end
 
   def handle_cast(:flush, state) do
-    spawn fn -> flush(state) end
-    {:noreply, reset(state)}
+    case flush(state) do
+      :ok         -> {:noreply, %State{}}
+      {:error, _} -> {:noreply, state}
+    end
   end
 
   defp flush(state) do

@@ -14,7 +14,9 @@ defmodule StatsEx.GraphitePusher do
         :gen_tcp.send(socket, payload)
         :gen_tcp.close(socket)
         :ok
-      error -> Logger.warn("Error when connecting to host: #{host}, port: #{port}: #{Kernel.inspect(error)}")
+      error ->
+        Logger.warn("Error when connecting to host: #{host}, port: #{port}: #{Kernel.inspect(error)}")
+        error
     end
   end
 end

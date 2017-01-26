@@ -82,11 +82,6 @@ defmodule DataCollectorTest do
     assert new_state.timers["load"][:standard_deviation] == 1.0
   end
 
-  test "when I have many values collect and I reset, the values will be cleared" do
-    state = %State{timers: [load: [data: [1]]], sets: [set: [1]], gauges: [speed: 10], counts: [views: 20]}
-    assert DataCollector.reset(state) == %State{timers: %{}, sets: %{}, gauges: %{}, counts: %{}}
-  end
-
   test "when I have an empty timer bucket, add empty data" do
     state = %State{timers: %{}}
     new_state = DataCollector.collect {"load", 3, :ms}, state
