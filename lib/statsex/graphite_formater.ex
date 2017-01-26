@@ -5,13 +5,13 @@ defmodule StatsEx.GraphiteFormatter do
   @namespace "stats"
 
   def format(state, timestamp \\ "") do
-    start_time = StatsEx.current_unix_time()
+    start_time = :os.system_time(:seconds)
     ""
     |> format_counts(state.counts, timestamp)
     |> format_gauges(state.gauges, timestamp)
     |> format_sets(state.sets,   timestamp)
     |> format_timers(state.timers, timestamp)
-    |> calculation_time(start_time - StatsEx.current_unix_time(), timestamp)
+    |> calculation_time(:os.system_time(:seconds) - start_time, timestamp)
   end
 
   defp format_counts(msg, counts, timestamp) do

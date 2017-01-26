@@ -34,7 +34,7 @@ defmodule StatsEx.DataHolder do
 
   defp flush(state) do
     state
-    |> format(StatsEx.current_unix_time())
+    |> format(:os.system_time(:seconds))
     |> send()
   end
 end
