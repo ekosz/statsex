@@ -1,4 +1,4 @@
-defmodule StatsEx.App do
+defmodule StatsEx.Application do
   @moduledoc """
   Application that spawns an UDP server, a Data Holder and a Notifier
   """

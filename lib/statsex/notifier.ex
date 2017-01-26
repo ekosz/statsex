@@ -51,6 +51,4 @@ defmodule StatsEx.Notifier do
   def terminate(_reason, _state) do
     :ok
   end
-
 end
-

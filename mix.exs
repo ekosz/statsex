@@ -12,7 +12,7 @@ defmodule Statsex.Mixfile do
 
   def application do
     [extra_applications: [:logger],
-     mod: { StatsEx.App, []}]
+     mod: { StatsEx.Application, []}]
   end
 
   defp deps do

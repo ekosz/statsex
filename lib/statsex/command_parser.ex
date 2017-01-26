@@ -2,11 +2,11 @@ defmodule StatsEx.CommandParser do
   @moduledoc """
   Parses commands in StatsD line format
   """
-
+  @pattern ~r/(?<bucket>\w+):(?<amount>[+-]?\d+)\|(?<type>\w+)/m
   @types ~w(c s g ms)
 
   def parse(command) do
-    captures = Regex.named_captures ~r/(?<bucket>\w+):(?<amount>[+-]?\d+)\|(?<type>\w+)/m, command |> to_string
+    captures = Regex.named_captures @pattern, command |> to_string
     with type when type in @types <- captures["type"],
       amount                      <- parse_amount(captures["amount"], type),
       bucket                      <- captures["bucket"]
