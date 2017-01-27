@@ -1,115 +1,87 @@
 defmodule StatsEx.DataCollector do
-  alias StatsEx.State, as: State
-
-  @plus_sign 43
-  @minus_sign 45
+  @moduledoc """
+  Collects data into metric types: count, set, gauge and time
+  """
 
   ## API
 
-  def reset(_state) do
-    State.new
-  end
-
-  def collect({b, v, t}, state) when is_list(b) do
-    collect({list_to_atom(b), v, t}, state)
-  end
-
-  def collect({b, v, t}, state) when is_list(t) do
-    collect({b, v, list_to_atom(t)}, state)
-  end
-
-  def collect({b, v, :c}, state) do
-    count(b, v, state)
-  end
-
-  def collect({b, v, :s}, state) do
-    set(b, v, state)
-  end
-
-  def collect({b, v, :g}, state) do
-    gauge(b, v, state)
-  end
-
-  def collect({b, v, :ms}, state) do
-    time(b, v, state)
-  end
+  def collect({b, v, :c},  s), do: count(b, v, s)
+  def collect({b, v, :s},  s), do: set(b, v, s)
+  def collect({b, v, :g},  s), do: gauge(b, v, s)
+  def collect({b, v, :ms}, s), do: time(b, v, s)
+  def collect(_, state), do: state
 
   ## Privates
 
   ### Count
 
-  defp count(b, v, state) when is_list(v) do
-    count(b, list_to_integer(v), state)
-  end
-
   defp count(bucket, value, state) do
     current_count = state.counts[bucket] || 0
 
-    count = current_count + value
+    new_count = current_count + value
 
-    state.counts(Keyword.put(state.counts, bucket, count))
+    %{state | counts: Map.put(state.counts, bucket, new_count)}
   end
 
   ### Set
 
-  defp set(b, v, state) when is_list(v) do
-    set(b, list_to_integer(v), state)
-  end
-
   defp set(bucket, value, state) do
-    case List.member?(state.sets[bucket], value) do
+    case Enum.member?(state.sets[bucket], value) do
       true ->
         state
       false ->
         current_set = state.sets[bucket] || []
-        set = current_set ++ [value]
-        state.sets(Keyword.put(state.sets, bucket, set))
+        new_set = current_set ++ [value]
+        %{state | sets: Map.put(state.sets, bucket, new_set)}
     end
   end
 
   ### Gauge
 
-  defp gauge(bucket, value, state) when hd(value) == @plus_sign or hd(value) == @minus_sign do
-    current_gauge = state.gauges[bucket] || 0
-
-    gauge = current_gauge + list_to_integer(value)
-
-    state.gauges(Keyword.put(state.gauges, bucket, gauge))
-  end
+  defp gauge(bucket, "+" <> _ = val, state), do: gauge_sum(bucket, parse_int(val), state)
+  defp gauge(bucket, "-" <> _ = val, state), do: gauge_sum(bucket, parse_int(val), state)
 
   defp gauge(bucket, value, state) do
-    state.gauges(Keyword.put(state.gauges, bucket, list_to_integer(value)))
+    %{state | gauges: Map.put(state.gauges, bucket, parse_int(value))}
+  end
+
+  defp parse_int(value) do
+    value |> Integer.parse() |> elem(0)
+  end
+
+  defp gauge_sum(bucket, value, state) do
+    current_gauge = state.gauges[bucket] || 0
+
+    new_gauge = current_gauge + value
+
+    %{state | gauges: Map.put(state.gauges, bucket, new_gauge)}
   end
 
   ### Time
 
-  defp time(b, v, state) when is_list(v) do
-    time(b, list_to_integer(v), state)
-  end
-
   defp time(bucket, value, state) do
-    timer = state.timers[bucket]
-    timer = Keyword.put(timer, :data, timer[:data] ++ [value])
+    init_timer = state.timers[bucket] || %{data: []}
+    timer = Map.put(init_timer, :data, init_timer[:data] ++ [value])
 
-    timer = Keyword.put(timer, :mean, mean(timer[:data]))
-    timer = Keyword.put(timer, :sum, sum(timer[:data]))
-    timer = Keyword.put(timer, :upper, :lists.max(timer[:data]))
-    timer = Keyword.put(timer, :lower, :lists.min(timer[:data]))
-    timer = Keyword.put(timer, :standard_deviation, standard_dev(timer[:data]))
+    new_timer = timer
+      |> Map.put(:mean, mean(timer[:data]))
+      |> Map.put(:sum, Enum.sum(timer[:data]))
+      |> Map.put(:upper, Enum.max(timer[:data]))
+      |> Map.put(:lower, Enum.min(timer[:data]))
+      |> Map.put(:standard_deviation, standard_dev(timer[:data]))
 
-    state.timers(Keyword.put(state.timers, bucket, timer))
+    %{state | timers: Map.put(state.timers, bucket, new_timer)}
   end
 
-  defp sum(array) do
-    Enum.reduce(array, 0, fn(unit, acc) -> unit + acc end)
-  end
-
-  defp mean(array) do
-    sum(array) / length(array)
+  defp mean(values) do
+    Enum.sum(values) / length(values)
   end
 
   defp standard_dev(values) when is_list(values) do
     mean = mean(values)
-    :math.sqrt(mean(Enum.map(values, fn(val) -> (val-mean)*(val-mean) end)))
+    values
+      |> Enum.map(fn val -> (val - mean) * (val - mean) end)
+      |> mean()
+      |> :math.sqrt
   end
 end

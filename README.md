@@ -11,3 +11,7 @@ StatsEx uses these application variables
 * udp\_port: The port that StatsEx listens to - defaults to 8888
 * graphite\_host: The host address of the graphite server - defaults to localhost
 * graphite\_port: The port of the graphite server - defaults to 2003
+
+## Compiling and Running
+
+After the usual `mix deps.get`, `mix compile` and `mix test`, you can run the server with `mix server`
